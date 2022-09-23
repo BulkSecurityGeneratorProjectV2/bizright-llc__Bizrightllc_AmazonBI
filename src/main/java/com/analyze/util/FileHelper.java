@@ -4,6 +4,7 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -31,7 +32,10 @@ public class FileHelper {
 				File f = new File(dest + name);
 				f.mkdirs();
 			} else {
-				File f = new File(dest + zipEntry.getName());
+				File f = new File(dest, zipEntry.getName());
+				if (!f.toPath().normalize().startsWith(dest)) {
+					throw new IOException("Bad zip entry");
+				}
 				f.getParentFile().mkdirs();
 				f.createNewFile();
 				InputStream is = zipFile.getInputStream(zipEntry);
